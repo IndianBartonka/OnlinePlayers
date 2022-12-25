@@ -2,8 +2,8 @@ package me.indian.pl.Commands;
 
 
 import me.clip.placeholderapi.PlaceholderAPI;
-import me.clip.placeholderapi.PlaceholderAPIPlugin;
-import me.clip.placeholderapi.PlaceholderHook;
+import me.indian.pl.Main;
+import me.indian.pl.Otchers.Refresh;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -18,11 +18,8 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
-import me.indian.pl.Main;
-import me.indian.pl.Otchers.Refresh;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class OnlinePlayers implements CommandExecutor, Listener {
@@ -39,145 +36,144 @@ public class OnlinePlayers implements CommandExecutor, Listener {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-            if (sender instanceof Player) {
-                Player p = (Player) sender;
+        if (sender instanceof Player) {
+            Player p = (Player) sender;
 
 
-                Inventory inv = Bukkit.createInventory(null, 54, "Online");
+            Inventory inv = Bukkit.createInventory(null, 54, "Online");
 
-                int lastslot = plugin.getConfig().getInt("lastplayerslot");
-                int bookslot = plugin.getConfig().getInt("nextpage");
-                int refreshslot = plugin.getConfig().getInt("refresh-slot");
-                int cmdsslot = plugin.getConfig().getInt("cmdslot");
-                int tpswitchslot = plugin.getConfig().getInt("tpswitchslot");
-                int barrierslot = plugin.getConfig().getInt("barrierslot");
 
-                int players = plugin.getConfig().getInt("start-counting-players-from-the-slot");
-                int slots = plugin.getConfig().getInt("start-counting-players-from-the-slot") + 1;
-                for (Player all : Bukkit.getOnlinePlayers()) {
+            int refreshslot = plugin.getConfig().getInt("refresh-slot");
+            int cmdsslot = plugin.getConfig().getInt("cmdslot");
+            int tpswitchslot = plugin.getConfig().getInt("tpswitchslot");
+            int barrierslot = plugin.getConfig().getInt("barrierslot");
 
-                    for (Integer it : plugin.getConfig().getIntegerList("GRAY_STAINED_GLASS_PANE")) {
-                        ItemStack empty = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
-                        ItemMeta s = empty.getItemMeta();
-                        s.setDisplayName(ChatColor.BLACK + " ");
-                        empty.setItemMeta(s);
+            int players = plugin.getConfig().getInt("start-counting-players-from-the-slot");
+            int slots = plugin.getConfig().getInt("start-counting-players-from-the-slot") + 1;
+            for (Player all : Bukkit.getOnlinePlayers()) {
 
-                        inv.setItem(it, empty);
+                for (Integer it : plugin.getConfig().getIntegerList("GRAY_STAINED_GLASS_PANE")) {
+                    ItemStack empty = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
+                    ItemMeta s = empty.getItemMeta();
+                    s.setDisplayName(ChatColor.BLACK + " ");
+                    empty.setItemMeta(s);
+
+                    inv.setItem(it, empty);
+                }
+                ItemStack gracz = new ItemStack(Material.PLAYER_HEAD);
+                SkullMeta gr = (SkullMeta) gracz.getItemMeta();
+
+                gr.setOwner(all.getPlayer().getName());
+
+                gr.setDisplayName(PlaceholderAPI.setPlaceholders(all, plugin.getConfig().getString("head-name-prefix") + all.getDisplayName() + plugin.getConfig().getString("head-name-sufix")));
+                ArrayList<String> lore = new ArrayList<>();
+                for (String msg : plugin.getConfig().getStringList("description")) {
+                    lore.add(PlaceholderAPI.setPlaceholders(all,ChatColor.translateAlternateColorCodes('&',msg.replace("<tp>", plugin.getConfig().getString("tp")))));
+                }
+                gr.setLore(lore);
+                gracz.setItemMeta(gr);
+
+                ItemStack wolny = new ItemStack(Material.GREEN_STAINED_GLASS_PANE);
+                ItemMeta wl = wolny.getItemMeta();
+                wl.setDisplayName(plugin.getConfig().getString("free-slots"));
+                ArrayList<String> sloty = new ArrayList<>();
+                sloty.add("§a" + Bukkit.getOnlinePlayers().size() + "§6/§a" + Bukkit.getMaxPlayers() + "");
+                if (plugin.getConfig().getBoolean("Playerlist")) {
+                    sloty.add(PlaceholderAPI.setPlaceholders(all, "%playerlist_online,normal,yes,list%  "));
+                }
+                wl.setLore(sloty);
+                wolny.setItemMeta(wl);
+
+                ItemStack zajen = new ItemStack(Material.RED_STAINED_GLASS_PANE);
+                ItemMeta zn = wolny.getItemMeta();
+                zn.setDisplayName(plugin.getConfig().getString("non-slots"));
+                zn.setLore(sloty);
+                zajen.setItemMeta(zn);
+                List<Integer> sl = plugin.getConfig().getIntegerList("GRAY_STAINED_GLASS_PANE");
+
+                if (plugin.getConfig().getBoolean("free&non-slots")) {
+                    if (Bukkit.getMaxPlayers() == Bukkit.getOnlinePlayers().size()) {
+                        inv.setItem(slots, zajen);
+                    } else {
+                        inv.setItem(slots, wolny);
                     }
-                    ItemStack gracz = new ItemStack(Material.PLAYER_HEAD);
-                    SkullMeta gr = (SkullMeta) gracz.getItemMeta();
+                }
 
-                    gr.setOwner(all.getPlayer().getName());
-
-                    gr.setDisplayName(PlaceholderAPI.setPlaceholders(all, plugin.getConfig().getString("head-name-prefix") + all.getDisplayName() + plugin.getConfig().getString("head-name-sufix")));
-                    ArrayList<String> lore = new ArrayList<>();
-                    for (String msg : plugin.getConfig().getStringList("description")) {
-                        lore.add(PlaceholderAPI.setPlaceholders(all, msg.replace("<tp>", plugin.getConfig().getString("tp"))));
-                    }
-                    gr.setLore(lore);
-                    gracz.setItemMeta(gr);
-
-                    ItemStack wolny = new ItemStack(Material.GREEN_STAINED_GLASS_PANE);
-                    ItemMeta wl = wolny.getItemMeta();
-                    wl.setDisplayName(plugin.getConfig().getString("free-slots"));
-                    ArrayList<String> sloty = new ArrayList<>();
-                    sloty.add("§a" + Bukkit.getOnlinePlayers().size() + "§6/§a" + Bukkit.getMaxPlayers() + "");
-                    if (plugin.getConfig().getBoolean("Playerlist")) {
-                        sloty.add(PlaceholderAPI.setPlaceholders(all, "%playerlist_online,normal,yes,list%  "));
-                    }
-                    wl.setLore(sloty);
-                    wolny.setItemMeta(wl);
-
-                    ItemStack zajen = new ItemStack(Material.RED_STAINED_GLASS_PANE);
-                    ItemMeta zn = wolny.getItemMeta();
-                    zn.setDisplayName(plugin.getConfig().getString("non-slots"));
-                    zn.setLore(sloty);
-                    zajen.setItemMeta(zn);
-                    List<Integer> sl = plugin.getConfig().getIntegerList("GRAY_STAINED_GLASS_PANE");
-
-                    if (plugin.getConfig().getBoolean("free&non-slots")) {
-                        if (Bukkit.getMaxPlayers() == Bukkit.getOnlinePlayers().size()) {
-                            inv.setItem(slots, zajen);
-                        } else {
-                            inv.setItem(slots, wolny);
-                        }
-                    }
-
-                    inv.setItem(players, gracz);
+                inv.setItem(players, gracz);
 
 
-                    inv.setItem(players, gracz);
-                    players++;
-                    if (plugin.getConfig().getBoolean("free&non-slots")) {
+                inv.setItem(players, gracz);
+                players++;
+                if (plugin.getConfig().getBoolean("free&non-slots")) {
+                    slots++;
+                    if (sl.contains(slots)) {
                         slots++;
-                        if (sl.contains(slots)) {
-                            slots++;
-                            slots++;
+                        slots++;
 
-                        }
-                    }
-                    if (sl.contains(players)) {
-                        players++;
-                        players++;
                     }
                 }
-
-
-                ItemStack ods = new ItemStack(Material.IRON_TRAPDOOR);
-                ItemMeta odss = ods.getItemMeta();
-                odss.setDisplayName(plugin.getConfig().getString("refresh"));
-                ods.setItemMeta(odss);
-
-                ItemStack guzik = new ItemStack(Material.STONE_BUTTON);
-                ItemMeta guz = guzik.getItemMeta();
-                guz.setDisplayName(plugin.getConfig().getString("TPswitch"));
-                ArrayList<String> gl = new ArrayList<>();
-                gl.add(plugin.getConfig().getString("tp"));
-                guz.setLore(gl);
-                guzik.setItemMeta(guz);
-
-
-                ItemStack cmds = new ItemStack(Material.COMMAND_BLOCK);
-                ItemMeta cd = cmds.getItemMeta();
-                cd.setDisplayName(plugin.getConfig().getString("cmd-switch"));
-                ArrayList<String> cmdlo = new ArrayList<>();
-                cmdlo.add(plugin.getConfig().getString("cmdl"));
-                cd.setLore(cmdlo);
-                cmds.setItemMeta(cd);
-
-
-                ItemStack test = new ItemStack(Material.IRON_TRAPDOOR);
-                ItemMeta testt = ods.getItemMeta();
-                testt.setDisplayName("test");
-                test.setItemMeta(testt);
-
-                ItemStack nextpage = new ItemStack(Material.BOOK);
-                ItemMeta np = ods.getItemMeta();
-                np.setDisplayName(plugin.getConfig().getString("nextpagename"));
-                nextpage.setItemMeta(np);
-
-                ItemStack barrier = new ItemStack(Material.BARRIER);
-                ItemMeta bar = barrier.getItemMeta();
-                bar.setDisplayName(plugin.getConfig().getString("barriername"));
-                barrier.setItemMeta(bar);
-
-
-                inv.setItem(cmdsslot, cmds);
-                inv.setItem(refreshslot, ods);
-                inv.setItem(tpswitchslot, guzik);
-                if (plugin.getConfig().getBoolean("barriera")) {
-                    inv.setItem(barrierslot, barrier);
+                if (sl.contains(players)) {
+                    players++;
+                    players++;
                 }
-
-
-                p.openInventory(inv);
-
-
-            } else {
-                sender.sendMessage(plugin.prefix + plugin.getConfig().getString("player-not-be"));
             }
-            return false;
+
+
+            ItemStack ods = new ItemStack(Material.IRON_TRAPDOOR);
+            ItemMeta odss = ods.getItemMeta();
+            odss.setDisplayName(plugin.getConfig().getString("refresh"));
+            ods.setItemMeta(odss);
+
+            ItemStack guzik = new ItemStack(Material.STONE_BUTTON);
+            ItemMeta guz = guzik.getItemMeta();
+            guz.setDisplayName(plugin.getConfig().getString("TPswitch"));
+            ArrayList<String> gl = new ArrayList<>();
+            gl.add(plugin.getConfig().getString("tp"));
+            guz.setLore(gl);
+            guzik.setItemMeta(guz);
+
+
+            ItemStack cmds = new ItemStack(Material.COMMAND_BLOCK);
+            ItemMeta cd = cmds.getItemMeta();
+            cd.setDisplayName(plugin.getConfig().getString("cmd-switch"));
+            ArrayList<String> cmdlo = new ArrayList<>();
+            cmdlo.add(plugin.getConfig().getString("cmdl"));
+            cd.setLore(cmdlo);
+            cmds.setItemMeta(cd);
+
+
+            ItemStack test = new ItemStack(Material.IRON_TRAPDOOR);
+            ItemMeta testt = ods.getItemMeta();
+            testt.setDisplayName("test");
+            test.setItemMeta(testt);
+
+            ItemStack nextpage = new ItemStack(Material.BOOK);
+            ItemMeta np = ods.getItemMeta();
+            np.setDisplayName(plugin.getConfig().getString("nextpagename"));
+            nextpage.setItemMeta(np);
+
+            ItemStack barrier = new ItemStack(Material.BARRIER);
+            ItemMeta bar = barrier.getItemMeta();
+            bar.setDisplayName(plugin.getConfig().getString("barriername"));
+            barrier.setItemMeta(bar);
+
+
+            inv.setItem(cmdsslot, cmds);
+            inv.setItem(refreshslot, ods);
+            inv.setItem(tpswitchslot, guzik);
+            if (plugin.getConfig().getBoolean("barriera")) {
+                inv.setItem(barrierslot, barrier);
+            }
+
+
+            p.openInventory(inv);
+
+
+        } else {
+            sender.sendMessage(plugin.prefix + plugin.getConfig().getString("player-not-be"));
         }
+        return false;
+    }
 
     @EventHandler
     public void InventoryClickEvent(InventoryClickEvent e) {
@@ -202,7 +198,7 @@ public class OnlinePlayers implements CommandExecutor, Listener {
                     }
 
                 } else {
-                    p.sendMessage(plugin.prefix +  plugin.getConfig().getString("admin-perms"));
+                    p.sendMessage(plugin.prefix + plugin.getConfig().getString("admin-perms"));
                     Bukkit.getScheduler().runTaskLater(plugin, () -> p.closeInventory(), 5);
                 }
             }
@@ -288,18 +284,10 @@ public class OnlinePlayers implements CommandExecutor, Listener {
             }
             if (e.getView().getTitle().equals("Online")) {
                 if (e.getCurrentItem().getItemMeta().getDisplayName().equals(plugin.getConfig().getString("barriername"))) {
-                        Bukkit.dispatchCommand(p, plugin.getConfig().getString("barriercommand"));
-
-                }
-            }
-            if (e.getView().getTitle().equals("Online")) {
-                if (e.getCurrentItem().getItemMeta().getDisplayName().equals(plugin.getConfig().getString("nextpagename"))) {
-
-
+                    Bukkit.dispatchCommand(p, plugin.getConfig().getString("barriercommand"));
 
                 }
             }
         }
     }
-
 }

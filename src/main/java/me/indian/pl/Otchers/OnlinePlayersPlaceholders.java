@@ -15,26 +15,10 @@ import java.util.List;
 public class OnlinePlayersPlaceholders extends PlaceholderExpansion implements Listener {
 
     private final Main plugin;
-    public static List<String> onlinep = new ArrayList<>();
 
     public OnlinePlayersPlaceholders(Main plugin){
         this.plugin = plugin;
     }
-
-//    @EventHandler
-//    public void PlayerJ(PlayerJoinEvent e){
-//        Player p = (Player) e.getPlayer();
-//        onlinep.add(p.getDisplayName());
-//
-//    }
-//
-//    @EventHandler
-//    public void PlayerQ(PlayerQuitEvent e){
-//        Player p = (Player) e.getPlayer();
-//        onlinep.remove(p.getDisplayName());
-//
-//    }
-
 
 
 
@@ -55,7 +39,7 @@ public class OnlinePlayersPlaceholders extends PlaceholderExpansion implements L
 
     @Override
     public boolean persist() {
-        return true; // This is required or else PlaceholderAPI will unregister the Expansion on reload
+        return true;
     }
 
     @Override

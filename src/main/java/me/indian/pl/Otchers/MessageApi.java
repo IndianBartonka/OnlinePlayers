@@ -11,41 +11,41 @@ import org.bukkit.entity.Player;
 
 public class MessageApi {
 
-    public static void ActionBar(Player p , String tekst){
-        p.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(tekst.replace("<player>" , p.getName())));
+    public static void ActionBar(Player p , String text){
+        p.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(text.replace("<player>" , p.getName())));
     }
-    public static void Chat(Player p , String tekst){
-        p.spigot().sendMessage(ChatMessageType.CHAT , TextComponent.fromLegacyText(tekst.replace("<player>" , p.getName())));
+    public static void Chat(Player p , String text){
+        p.spigot().sendMessage(ChatMessageType.CHAT , TextComponent.fromLegacyText(text.replace("<player>" , p.getName())));
     }
-    public static void Console(Player p ,String komenda){
-        Bukkit.dispatchCommand(Bukkit.getConsoleSender() , komenda.replace("<player>" , p.getName()));
+    public static void Console(Player p ,String command){
+        Bukkit.dispatchCommand(Bukkit.getConsoleSender() , command.replace("<player>" , p.getName()));
     }
-    public static void Console(String komenda){
-        Bukkit.dispatchCommand(Bukkit.getConsoleSender() , komenda);
+    public static void Console(String command){
+        Bukkit.dispatchCommand(Bukkit.getConsoleSender() , command);
     }
-    public static void PlayerCommand(Player p, String komenda) {
-        Bukkit.dispatchCommand(p , komenda.replace("<player>" , p.getName()));
+    public static void PlayerCommand(Player p, String command) {
+        Bukkit.dispatchCommand(p , command.replace("<player>" , p.getName()));
     }
-    public static void HoverMessage(Player p , String tekst , String hovertekst) {
-        TextComponent message = new TextComponent(tekst);
-        message.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(hovertekst).create()));
+    public static void HoverMessage(Player p , String text , String hovertext) {
+        TextComponent message = new TextComponent(text);
+        message.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(hovertext).create()));
         p.spigot().sendMessage(message);
     }
-    public static void HoverMessage(Player p , String tekst ,String komenda , String hovertekst , Boolean run) {
-        TextComponent message = new TextComponent(tekst);
+    public static void HoverMessage(Player p , String text ,String command , String hovertext , Boolean run) {
+        TextComponent message = new TextComponent(text);
         if (run == true) {
-            message.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND , komenda));
+            message.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND , command));
         } else {
-            message.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, komenda));
+            message.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, command));
         }
-        message.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(hovertekst).create()));
+        message.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(hovertext).create()));
         p.spigot().sendMessage(message);
     }
 
-    public static void HoverMessageCopy(Player p , String tekst ,String tekstc , String hovertekst ) {
-        TextComponent message = new TextComponent(tekst);
-        message.setClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, tekstc));
-        message.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(hovertekst).create()));
+    public static void HoverMessageCopy(Player p , String text1 ,String text2 , String hovertext ) {
+        TextComponent message = new TextComponent(text1);
+        message.setClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, text2));
+        message.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(hovertext).create()));
         p.spigot().sendMessage(message);
     }
 }
